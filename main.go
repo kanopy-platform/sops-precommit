@@ -4,6 +4,7 @@ import (
 
 	"bufio"
 	"os"
+	"strings"
 	"errors"
 	"flag"
 	"fmt"
@@ -15,7 +16,7 @@ import (
 
 var SopsNoConfigMatch = errors.New("error loading config: no matching creation rules found")
 
-var usage = "sopstest file.."
+var usage = "sopstest [-silent] filepath..."
 
 var silent bool
 
@@ -38,8 +39,7 @@ func main() {
 		// Try to parse the change set from a pipe
 		tmpFiles, err := parseStdin()
 		if err != nil {
-			log(fmt.Sprintln("error from pipe ", err))
-			log(usage)
+			log(fmt.Sprintln("error from pipe: ", err))
 			exitCode = 1
 			return
 		}
@@ -47,6 +47,10 @@ func main() {
 	} else {
 		// Parse file list from args
 		files = append(files, args...)
+	}
+
+	if len(files) == 0 {
+		log(usage)
 	}
 
 	// Test for a sops config file, if we don't find one, we will decrypt all input
@@ -114,6 +118,8 @@ func parseStdin() ([]string, error) {
 		return files, err
 	}
 
+
+	// If we are in char device mode we are in a terminal and were handled by arg parsing
 	if in.Mode() & os.ModeCharDevice != 0 || in.Size() <= 0 {
 		return files, fmt.Errorf("no input or input device")
 	}
@@ -123,7 +129,7 @@ func parseStdin() ([]string, error) {
 	for scanner.Scan() {
 		line := scanner.Text()
 		if line != "" {
-			files = append(files, line)
+			files = append(files, strings.Trim(line, "\""))
 		}
 	}	
 
