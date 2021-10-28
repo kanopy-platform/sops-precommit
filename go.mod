@@ -1,4 +1,4 @@
-module sopshook
+module sopsprecommit
 
 go 1.16
 
