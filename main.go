@@ -4,9 +4,7 @@ import (
 
 	"bufio"
 	"os"
-//	"io"
 	"errors"
-//	"strings"
 	"flag"
 	"fmt"
 	"path/filepath"
@@ -40,8 +38,8 @@ func main() {
 		// Try to parse the change set from a pipe
 		tmpFiles, err := parseStdin()
 		if err != nil {
-			fmt.Println("error from pipe ", err)
-			fmt.Println(usage)
+			log(fmt.Sprintln("error from pipe ", err))
+			log(usage)
 			exitCode = 1
 			return
 		}
@@ -110,38 +108,23 @@ func log(message string) {
 
 func parseStdin() ([]string, error) {
 
-//	in, err := os.Stdin.Stat()
-//	if err != nil {	
-//		return files, err
-//	}
-
-//	if in.Mode() != os.ModeCharDevice || in.Size() <= 0 {
-//		return files, fmt.Errorf("no input or input device")
-//	}
-
 	files := []string{}
-//	reader := bufio.NewReader(os.Stdin)
+	in, err := os.Stdin.Stat()
+	if err != nil {	
+		return files, err
+	}
+
+	if in.Mode() & os.ModeCharDevice != 0 || in.Size() <= 0 {
+		return files, fmt.Errorf("no input or input device")
+	}
+
 	scanner := bufio.NewScanner(os.Stdin)
 
-//	out:
 	for scanner.Scan() {
-//		file, err := reader.ReadString(' ')
 		line := scanner.Text()
 		if line != "" {
 			files = append(files, line)
 		}
-/*
-		if err != nil && err != io.EOF {
-			return []string{}, err
-		}
-
-		if file != "" {	
-			files = append(files, strings.TrimSuffix(file, "\n"))
-		}
-		if err != nil {
-			break out
-		}
-*/
 	}	
 
 	if err := scanner.Err(); err != nil {
