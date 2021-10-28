@@ -1,18 +1,16 @@
 package main
 
 import (
-
 	"bufio"
-	"os"
-	"strings"
 	"errors"
 	"flag"
 	"fmt"
-	"path/filepath"
 	sopsconf "go.mozilla.org/sops/v3/config"
 	"go.mozilla.org/sops/v3/decrypt"
+	"os"
+	"path/filepath"
+	"strings"
 )
-
 
 var SopsNoConfigMatch = errors.New("error loading config: no matching creation rules found")
 
@@ -27,11 +25,11 @@ func init() {
 func main() {
 
 	exitCode := 0
-	defer func() { os.Exit(exitCode) } ()
+	defer func() { os.Exit(exitCode) }()
 
 	args := flag.Args()
 
-	// List of files in the change set 
+	// List of files in the change set
 	files := []string{}
 
 	if len(args) < 1 {
@@ -94,12 +92,12 @@ func main() {
 		// If we fail to decrypt, note the file and error and process the rest of the change set for other failures
 		if err != nil {
 			log(fmt.Sprintf("Error derypting %s: %s\n", file, err))
-			exitCode = 1	
+			exitCode = 1
 			continue
 		}
 		// List validated files because it is a better user experience
 		if !silent {
-		log(fmt.Sprintln("File: ", file," encryption validated"))
+			log(fmt.Sprintln("File: ", file, " encryption validated"))
 		}
 	}
 }
@@ -114,13 +112,12 @@ func parseStdin() ([]string, error) {
 
 	files := []string{}
 	in, err := os.Stdin.Stat()
-	if err != nil {	
+	if err != nil {
 		return files, err
 	}
 
-
 	// If we are in char device mode we are in a terminal and were handled by arg parsing
-	if in.Mode() & os.ModeCharDevice != 0 || in.Size() <= 0 {
+	if in.Mode()&os.ModeCharDevice != 0 || in.Size() <= 0 {
 		return files, fmt.Errorf("no input or input device")
 	}
 
@@ -131,7 +128,7 @@ func parseStdin() ([]string, error) {
 		if line != "" {
 			files = append(files, strings.Trim(line, "\""))
 		}
-	}	
+	}
 
 	if err := scanner.Err(); err != nil {
 		return files, err
