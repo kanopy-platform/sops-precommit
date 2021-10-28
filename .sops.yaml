@@ -1,0 +1,3 @@
+creation_rules:
+  - path_regex: .*/secrets/.*$
+    pgp: A7D265DC04737A84B003D60C2A49D8E3A26B4802
