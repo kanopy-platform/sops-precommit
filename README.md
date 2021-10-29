@@ -27,18 +27,9 @@ cat .sops.yaml
 sops secrets/new_file.yaml
 ```
 
-3. Add the new encrypted file to the cached changes
+3. Add the new encrypted file to the cached changes, and pass the change set to the tool.
 
 ```
 git add secrets/new_file.yaml
-```
-
-4. Pass the change set to the tool.
-
-```
-cd $(git rev-parse --show-toplevel)
-git diff --name-only --cached | ./sopsprecommit
-
-cd -
-
+git diff --name-only --cached --relative | ./sopsprecommit
 ```
