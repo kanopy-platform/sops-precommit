@@ -21,7 +21,7 @@ gpg --import ./infra_test_key.asc
 cat .sops.yaml
 ```
 
-2. Create a new file in the secrets directory.
+2. Create a new file in the secrets directory. Note: you will have to edit the default file to save
 
 ```
 sops secrets/new_file.yaml

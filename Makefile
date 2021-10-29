@@ -1,2 +1,4 @@
 build:
-	go mod tidy && go build -o ./sopsprecommit ./main.go
+	go mod tidy
+	go mod download
+	go build -o ./sopsprecommit ./main.go
