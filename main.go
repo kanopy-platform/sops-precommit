@@ -104,7 +104,7 @@ func main() {
 
 func log(message string) {
 	if !silent {
-		fmt.Println(message)
+		fmt.Printf("%s", message)
 	}
 }
 
