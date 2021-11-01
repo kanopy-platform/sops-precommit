@@ -31,5 +31,5 @@ sops secrets/new_file.yaml
 
 ```
 git add secrets/new_file.yaml
-git diff --name-only --cached --relative | ./sopsprecommit
+git diff --name-only --cached --relative | ../sops-precommit
 ```
