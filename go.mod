@@ -1,4 +1,4 @@
-module sopsprecommit
+module github.com/kanopy-platform/sops-precommit
 
 go 1.16
 
