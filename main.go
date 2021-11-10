@@ -91,7 +91,7 @@ func main() {
 		_, err := decrypt.File(file, filepath.Ext(file))
 		// If we fail to decrypt, note the file and error and process the rest of the change set for other failures
 		if err != nil {
-			log(fmt.Sprintf("Error derypting %s: %s\n", file, err))
+			log(fmt.Sprintf("Error decrypting %s: %s\n", file, err))
 			exitCode = 1
 			continue
 		}
