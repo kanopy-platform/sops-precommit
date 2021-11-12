@@ -5,11 +5,12 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	sopsconf "go.mozilla.org/sops/v3/config"
-	"go.mozilla.org/sops/v3/decrypt"
 	"os"
 	"path/filepath"
 	"strings"
+
+	sopsconf "go.mozilla.org/sops/v3/config"
+	"go.mozilla.org/sops/v3/decrypt"
 )
 
 var SopsNoConfigMatch = errors.New("error loading config: no matching creation rules found")
@@ -70,6 +71,9 @@ func main() {
 	if hasConfig {
 		//sopsConfigs := map[string]*sopsconf.Config{}
 		for _, f := range files {
+			if !fileExists(f) {
+				continue // skip if the file does not exist.  This means it has been removed from git.
+			}
 			c, e := sopsconf.LoadCreationRuleForFile(confPath, f, map[string]*string{})
 			if e != nil && e.Error() == SopsNoConfigMatch.Error() {
 				log(fmt.Sprintf("File: %s doesn't match any sops config creation_rule regex. Skipping.\n", f))
@@ -100,6 +104,14 @@ func main() {
 			log(fmt.Sprintln("File: ", file, " encryption validated"))
 		}
 	}
+}
+
+func fileExists(filename string) bool {
+	stat, err := os.Stat(filename)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return !stat.IsDir()
 }
 
 func log(message string) {
