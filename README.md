@@ -15,7 +15,7 @@ Decryption is the most effective validation tool for an encrypted file and the a
 1. Build the tool and import the test key.
 
 ```
-make build
+make install
 cd example
 gpg --import ./infra_test_key.asc
 cat .sops.yaml
