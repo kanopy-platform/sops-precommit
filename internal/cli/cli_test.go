@@ -12,7 +12,6 @@ import (
 type decryptmock struct {
 	hasError bool
 	hasConf  bool
-	files    []string
 }
 
 func (d *decryptmock) File(filepath string, ext string) ([]byte, error) {
