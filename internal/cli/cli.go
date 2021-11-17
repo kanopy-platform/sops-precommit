@@ -130,6 +130,7 @@ func getFilteredFiles(sops sopsrules, files []string) ([]string, error) {
 	if sops.HasConf() {
 		for _, f := range files {
 			if !fileExists(f) {
+				log.Infof("Secret: %s was deleted in this changeset", f)
 				continue // skip if the file does not exist.  This means it has been removed from git.
 			}
 
