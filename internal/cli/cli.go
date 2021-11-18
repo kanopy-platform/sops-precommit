@@ -30,11 +30,11 @@ func NewRootCommand() *cobra.Command {
 	return cmd
 }
 
-type decryption interface {
+type decrypter interface {
 	File(filepath string, ext string) ([]byte, error)
 }
 
-type sopsrules interface {
+type sopsRuleMatcher interface {
 	IsFileMatchCreationRule(file string) (bool, error)
 	HasConf() bool
 }
@@ -123,7 +123,7 @@ func (c *RootCommand) runE(cmd *cobra.Command, args []string) error {
 	return decryptFiles(sops, filteredFiles)
 }
 
-func getFilteredFiles(sops sopsrules, files []string) ([]string, error) {
+func getFilteredFiles(sops sopsRuleMatcher, files []string) ([]string, error) {
 	filteredFiles := []string{}
 
 	// If we have a sops config we will use it to filter for files we expect to be encrypted in the change set
@@ -162,7 +162,7 @@ func getSopsConf(path string) (string, error) {
 	return confPath, nil
 }
 
-func decryptFiles(d decryption, files []string) error {
+func decryptFiles(d decrypter, files []string) error {
 	var hasError bool
 
 	for _, file := range files {
