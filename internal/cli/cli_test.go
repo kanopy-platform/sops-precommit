@@ -2,7 +2,6 @@ package cli
 
 import (
 	"errors"
-	"os"
 	"strings"
 	"testing"
 
@@ -146,14 +145,4 @@ func TestFileExists(t *testing.T) {
 	for _, test := range tests {
 		assert.Equal(t, fileExists(test.file), test.want)
 	}
-}
-
-func TestParseStdn(t *testing.T) {
-	want := []string{"1", "2", "3"}
-	file, err := os.Open("testdata/test")
-	assert.NoError(t, err)
-
-	got, err := parseStdin(file)
-	assert.NoError(t, err)
-	assert.Equal(t, got, want)
 }

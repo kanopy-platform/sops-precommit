@@ -1,9 +1,9 @@
 package cli
 
 import (
-	"bufio"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -71,7 +71,7 @@ func (s *sopsclient) HasConf() bool {
 func (c *RootCommand) persistentPreRunE(cmd *cobra.Command, args []string) error {
 	// bind flags to viper
 	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
-	viper.SetEnvPrefix("sops_pre_commit")
+	viper.SetEnvPrefix("sops")
 	viper.AutomaticEnv()
 	if err := viper.BindPFlags(cmd.Flags()); err != nil {
 		return err
@@ -95,11 +95,11 @@ func (c *RootCommand) runE(cmd *cobra.Command, args []string) error {
 
 	if len(args) < 1 {
 		// Try to parse the change set from a pipe
-		tmpFiles, err := parseStdin(os.Stdin)
+		input, err := ioutil.ReadAll(os.Stdin)
 		if err != nil {
 			return err
 		}
-		files = append(files, tmpFiles...)
+		files = strings.Fields(string(input))
 	} else {
 		// Parse file list from args
 		files = append(files, args...)
@@ -190,32 +190,4 @@ func fileExists(filename string) bool {
 		return false
 	}
 	return !stat.IsDir()
-}
-
-func parseStdin(f *os.File) ([]string, error) {
-	files := []string{}
-	in, err := f.Stat()
-	if err != nil {
-		return files, err
-	}
-
-	// If we are in char device mode we are in a terminal and were handled by arg parsing
-	if in.Mode()&os.ModeCharDevice != 0 || in.Size() <= 0 {
-		return files, fmt.Errorf("no input or input device")
-	}
-
-	scanner := bufio.NewScanner(f)
-
-	for scanner.Scan() {
-		line := scanner.Text()
-		if line != "" {
-			files = append(files, strings.Trim(line, "\""))
-		}
-	}
-
-	if err := scanner.Err(); err != nil {
-		return files, err
-	}
-
-	return files, nil
 }
