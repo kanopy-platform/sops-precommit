@@ -7,6 +7,8 @@ workspace:
 volumes:
   - name: cache
     temp: {}
+trigger:
+  branch: [main]
 steps:
   - name: test
     image: golangci/golangci-lint:v1.38.0-alpine
@@ -16,3 +18,7 @@ steps:
     commands:
       - apk add make
       - make test
+    resources:
+      requests:
+        cpu: 500m
+        memory: 800Mib
