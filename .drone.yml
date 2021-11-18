@@ -20,5 +20,5 @@ steps:
       - make test
     resources:
       requests:
-        cpu: 500m
-        memory: 800Mib
+        cpu: 500
+        memory: 800MiB
