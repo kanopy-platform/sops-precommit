@@ -2,7 +2,6 @@ package cli
 
 import (
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -106,7 +105,9 @@ func (c *RootCommand) runE(cmd *cobra.Command, args []string) error {
 	}
 
 	if len(files) == 0 {
-		return fmt.Errorf("no files: %v", files)
+		// return nil since there are valid reasons to run commit without changes `git commit --amend`
+		log.Info("sops: no files in the changeset")
+		return nil
 	}
 
 	confPath, err := getSopsConf(".")
