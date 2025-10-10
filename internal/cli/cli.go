@@ -14,7 +14,7 @@ import (
 	"go.mozilla.org/sops/v3/decrypt"
 )
 
-var SopsNoConfigMatch = errors.New("error loading config: no matching creation rules found")
+var ErrSopsNoConfigMatch = errors.New("error loading config: no matching creation rules found")
 
 type RootCommand struct{}
 
@@ -48,7 +48,7 @@ func (s *sopsclient) File(filepath string, ext string) ([]byte, error) {
 
 func (s *sopsclient) IsFileMatchCreationRule(file string) (bool, error) {
 	c, err := sopsconf.LoadCreationRuleForFile(s.ConfPath, file, map[string]*string{})
-	if err != nil && err.Error() == SopsNoConfigMatch.Error() {
+	if err != nil && err.Error() == ErrSopsNoConfigMatch.Error() {
 		log.Debugf("File: %s doesn't match any sops config creation_rule regex. Skipping.\n", file)
 		return false, nil
 	}
