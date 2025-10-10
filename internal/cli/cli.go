@@ -154,8 +154,9 @@ func getSopsConf(path string) (string, error) {
 	// Test for a sops config file, if we don't find one, we will decrypt all input
 	confPath, err := sopsconf.FindConfigFile(path)
 	if err != nil {
-		if err.Error() == "Config file not found" {
+		if err.Error() == "config file not found" {
 			log.Warn("No sops config found in repo, testing all files.")
+			return "", nil
 		} else {
 			return "", err
 		}
