@@ -10,8 +10,8 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	sopsconf "go.mozilla.org/sops/v3/config"
-	"go.mozilla.org/sops/v3/decrypt"
+	sopsconf "github.com/getsops/sops/v3/config"
+	"github.com/getsops/sops/v3/decrypt"
 )
 
 var ErrSopsNoConfigMatch = errors.New("error loading config: no matching creation rules found")
