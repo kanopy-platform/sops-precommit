@@ -94,7 +94,7 @@ func TestGetSopsConfig(t *testing.T) {
 	for _, test := range tests {
 		got, err := getSopsConf(test.path)
 		assert.NoError(t, err)
-		assert.Equal(t, got, test.want)
+		assert.Equal(t, test.want, got)
 	}
 }
 
