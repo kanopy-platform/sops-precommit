@@ -2,7 +2,7 @@ package cli
 
 import (
 	"errors"
-	"io/ioutil"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -94,7 +94,7 @@ func (c *RootCommand) runE(cmd *cobra.Command, args []string) error {
 
 	if len(args) < 1 {
 		// Try to parse the change set from a pipe
-		input, err := ioutil.ReadAll(os.Stdin)
+		input, err := io.ReadAll(os.Stdin)
 		if err != nil {
 			return err
 		}
