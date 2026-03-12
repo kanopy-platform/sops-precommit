@@ -16,7 +16,6 @@ steps:
       - name: cache
         path: /go
     commands:
-      - apk add make
       - make test
     resources:
       requests:
