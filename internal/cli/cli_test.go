@@ -9,13 +9,18 @@ import (
 )
 
 type decryptmock struct {
-	hasError bool
-	hasConf  bool
+	hasError    bool
+	hasConf     bool
+	errorString string
 }
 
 func (d *decryptmock) File(filepath string, ext string) ([]byte, error) {
 	if d.hasError {
-		return nil, errors.New("mock error")
+		msg := "mock error"
+		if d.errorString != "" {
+			msg = d.errorString
+		}
+		return nil, errors.New(msg)
 	}
 	return []byte("success"), nil
 }
@@ -100,26 +105,40 @@ func TestGetSopsConfig(t *testing.T) {
 
 func TestDecryptFiles(t *testing.T) {
 	tests := []struct {
-		hasError bool
+		name        string
+		hasError    bool
+		errorString string
+		wantErr     bool
 	}{
 		{
-			hasError: false,
+			name: "successful decryption",
 		},
 		{
+			name:     "decryption error",
 			hasError: true,
+			wantErr:  true,
+		},
+		{
+			name:        "sops metadata not found is an error",
+			hasError:    true,
+			errorString: "sops metadata not found",
+			wantErr:     true,
 		},
 	}
 
 	mock := &decryptmock{}
 
 	for _, test := range tests {
-		mock.hasError = test.hasError
-		err := decryptFiles(mock, []string{"1"})
-		if mock.hasError {
-			assert.Error(t, err)
-		} else {
-			assert.NoError(t, err)
-		}
+		t.Run(test.name, func(t *testing.T) {
+			mock.hasError = test.hasError
+			mock.errorString = test.errorString
+			err := decryptFiles(mock, []string{"1"})
+			if test.wantErr {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+			}
+		})
 	}
 }
 

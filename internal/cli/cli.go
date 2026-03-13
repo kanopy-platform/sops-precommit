@@ -2,7 +2,7 @@ package cli
 
 import (
 	"errors"
-	"io/ioutil"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -14,7 +14,7 @@ import (
 	"go.mozilla.org/sops/v3/decrypt"
 )
 
-var SopsNoConfigMatch = errors.New("error loading config: no matching creation rules found")
+var ErrSopsNoConfigMatch = errors.New("error loading config: no matching creation rules found")
 
 type RootCommand struct{}
 
@@ -48,7 +48,7 @@ func (s *sopsclient) File(filepath string, ext string) ([]byte, error) {
 
 func (s *sopsclient) IsFileMatchCreationRule(file string) (bool, error) {
 	c, err := sopsconf.LoadCreationRuleForFile(s.ConfPath, file, map[string]*string{})
-	if err != nil && err.Error() == SopsNoConfigMatch.Error() {
+	if err != nil && err.Error() == ErrSopsNoConfigMatch.Error() {
 		log.Debugf("File: %s doesn't match any sops config creation_rule regex. Skipping.\n", file)
 		return false, nil
 	}
@@ -94,7 +94,7 @@ func (c *RootCommand) runE(cmd *cobra.Command, args []string) error {
 
 	if len(args) < 1 {
 		// Try to parse the change set from a pipe
-		input, err := ioutil.ReadAll(os.Stdin)
+		input, err := io.ReadAll(os.Stdin)
 		if err != nil {
 			return err
 		}
@@ -115,6 +115,11 @@ func (c *RootCommand) runE(cmd *cobra.Command, args []string) error {
 		return err
 	}
 	sops.ConfPath = confPath
+
+	if !sops.HasConf() {
+		log.Info("No sops config found, nothing to validate")
+		return nil
+	}
 
 	filteredFiles, err := getFilteredFiles(sops, files)
 	if err != nil {

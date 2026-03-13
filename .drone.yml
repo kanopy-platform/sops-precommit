@@ -11,12 +11,11 @@ trigger:
   branch: [main]
 steps:
   - name: test
-    image: golangci/golangci-lint:v1.38.0-alpine
+    image: golangci/golangci-lint:v2.5
     volumes:
       - name: cache
         path: /go
     commands:
-      - apk add make
       - make test
     resources:
       requests:
