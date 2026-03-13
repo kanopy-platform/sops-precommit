@@ -10,8 +10,8 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	sopsconf "go.mozilla.org/sops/v3/config"
-	"go.mozilla.org/sops/v3/decrypt"
+	sopsconf "github.com/getsops/sops/v3/config"
+	"github.com/getsops/sops/v3/decrypt"
 )
 
 var ErrSopsNoConfigMatch = errors.New("error loading config: no matching creation rules found")
@@ -159,7 +159,7 @@ func getSopsConf(path string) (string, error) {
 	// Test for a sops config file, if we don't find one, we will decrypt all input
 	confPath, err := sopsconf.FindConfigFile(path)
 	if err != nil {
-		if err.Error() == "Config file not found" {
+		if err.Error() == "config file not found" {
 			log.Warn("No sops config found in repo, testing all files.")
 		} else {
 			return "", err
